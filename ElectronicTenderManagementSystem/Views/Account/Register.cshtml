@@ -1,0 +1,71 @@
+@model ETTS.Models.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Şirket Kaydı";
+}
+
+<div class="row justify-content-center animate-fade-in mb-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold text-primary">Şirketinizi Kaydedin</h2>
+            <p class="text-secondary">ETTS ekosistemine katılarak ihalelere teklif vermeye başlayın.</p>
+        </div>
+        
+        <div class="card shadow-lg p-4 p-md-5">
+            <form asp-action="Register" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+                
+                <h5 class="mb-4 text-dark border-bottom pb-2 mt-2">Hesap Bilgileri</h5>
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label asp-for="Username" class="form-label fw-semibold">Kullanıcı Adı</label>
+                        <input asp-for="Username" class="form-control" placeholder="admin_sirket" />
+                        <span asp-validation-for="Username" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label asp-for="Email" class="form-label fw-semibold">E-posta</label>
+                        <input asp-for="Email" class="form-control" placeholder="info@sirket.com" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label asp-for="Password" class="form-label fw-semibold">Şifre</label>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="••••••••" />
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
+                
+                <h5 class="mb-4 text-dark border-bottom pb-2 mt-2">Şirket Bilgileri</h5>
+                
+                <div class="mb-4">
+                    <label asp-for="CompanyName" class="form-label fw-semibold">Şirket Tam Adı</label>
+                    <input asp-for="CompanyName" class="form-control" placeholder="ABC Teknoloji A.Ş." />
+                    <span asp-validation-for="CompanyName" class="text-danger small"></span>
+                </div>
+                
+                <div class="mb-4">
+                    <label asp-for="Phone" class="form-label fw-semibold">Telefon</label>
+                    <input asp-for="Phone" class="form-control" placeholder="05XX XXX XX XX" />
+                    <span asp-validation-for="Phone" class="text-danger small"></span>
+                </div>
+                
+                <div class="mb-4">
+                    <label asp-for="Description" class="form-label fw-semibold">Kısa Açıklama (Opsiyonel)</label>
+                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Şirketinizin faaliyet alanlarından bahsedin..."></textarea>
+                </div>
+                
+                <div class="d-grid mt-5">
+                    <button type="submit" class="btn btn-primary btn-lg shadow-sm">Kayıt İşlemini Tamamla</button>
+                </div>
+            </form>
+            
+            <div class="mt-4 text-center">
+                <p class="text-secondary small">Zaten hesabınız var mı? <a asp-action="Login" class="fw-bold text-decoration-none text-primary">Giriş Yap</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

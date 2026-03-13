@@ -1,0 +1,160 @@
+@model IEnumerable<ETTS.Models.Domain.Offer>
+
+@{
+    ViewData["Title"] = "Yönetim Paneli";
+}
+
+<div class="animate-fade-in">
+    <div class="mb-5">
+        <h2 class="display-6 fw-bold">Kontrol Paneli</h2>
+        <p class="text-secondary">Sistem genelindeki istatistikleri ve son aktiviteleri takip edin.</p>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card p-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="bg-white bg-opacity-10 p-2 rounded-3 text-white">
+                        <i class="bi bi-buildings fs-4"></i>
+                    </div>
+                </div>
+                <p class="text-white text-opacity-75 small mb-1">Toplam Şirket</p>
+                <h2 class="mb-0">@ViewBag.TotalCompanies</h2>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); color: white;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="bg-white bg-opacity-10 p-2 rounded-3 text-white">
+                        <i class="bi bi-megaphone fs-4"></i>
+                    </div>
+                </div>
+                <p class="text-white text-opacity-75 small mb-1">Açık İhaleler</p>
+                <h2 class="mb-0">@ViewBag.OpenTenders</h2>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #10b981 0%, #065f46 100%); color: white;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="bg-white bg-opacity-10 p-2 rounded-3 text-white">
+                        <i class="bi bi-graph-up fs-4"></i>
+                    </div>
+                </div>
+                <p class="text-white text-opacity-75 small mb-1">Bu Ayki Teklifler</p>
+                <h2 class="mb-0">@ViewBag.MonthlyOffers</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Recent Offers -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">Son Gelen Teklifler</h5>
+                    <a asp-controller="OfferRequest" asp-action="Index" class="btn btn-sm btn-light border small">Tümünü Gör</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light bg-opacity-50">
+                                <tr>
+                                    <th class="ps-4 border-0 small text-secondary">TARİH</th>
+                                    <th class="border-0 small text-secondary">ŞİRKET</th>
+                                    <th class="border-0 small text-secondary">İHALE</th>
+                                    <th class="border-0 small text-secondary text-end">FİYAT</th>
+                                    <th class="border-0 small text-secondary ps-4">DURUM</th>
+                                    <th class="border-0 pe-4"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var offer in Model)
+                                {
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div class="small fw-semibold">@offer.CreatedAt.ToString("dd.MM.yyyy")</div>
+                                            <div class="text-secondary" style="font-size: 0.7rem;">@offer.CreatedAt.ToString("HH:mm")</div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle me-2 d-flex align-items-center justify-content-center fw-bold" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                                                    @offer.CompanyUser.Username?[0].ToString().ToUpper()
+                                                </div>
+                                                <span class="small fw-semibold">@offer.CompanyUser.Username</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="small fw-semibold text-truncate" style="max-width: 150px;">@offer.OfferRequest.Title</div>
+                                        </td>
+                                        <td class="text-end fw-bold text-dark">
+                                            @offer.Price.ToString("C2")
+                                        </td>
+                                        <td class="ps-4">
+                                            @{
+                                                var bClass = offer.Status == ETTS.Models.Domain.OfferStatus.Approved ? "bg-success" : 
+                                                            (offer.Status == ETTS.Models.Domain.OfferStatus.Rejected ? "bg-danger" : "bg-warning text-dark");
+                                            }
+                                            <span class="badge @bClass shadow-sm" style="font-size: 0.7rem;">@offer.Status</span>
+                                        </td>
+                                        <td class="pe-4 text-end">
+                                            <a asp-controller="OfferRequest" asp-action="Detail" asp-route-id="@offer.OfferRequestId" class="btn btn-sm btn-light border-0">
+                                                <i class="bi bi-chevron-right"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 mb-4 h-100">
+                <div class="card-header bg-white border-0 py-4 px-4">
+                    <h5 class="mb-0 fw-bold">Hızlı İşlemler</h5>
+                </div>
+                <div class="card-body px-4">
+                    <div class="d-grid gap-3">
+                        <a asp-controller="OfferRequest" asp-action="Create" class="btn btn-light border d-flex align-items-center justify-content-between p-3 rounded-4 transition-all">
+                            <span class="d-flex align-items-center">
+                                <i class="bi bi-plus-circle-fill text-primary me-3 fs-5"></i>
+                                <span class="fw-semibold text-dark">Yeni Talep Yayınla</span>
+                            </span>
+                            <i class="bi bi-chevron-right small text-secondary"></i>
+                        </a>
+                        <a asp-controller="Admin" asp-action="Companies" class="btn btn-light border d-flex align-items-center justify-content-between p-3 rounded-4 transition-all">
+                            <span class="d-flex align-items-center">
+                                <i class="bi bi-people-fill text-success me-3 fs-5"></i>
+                                <span class="fw-semibold text-dark">Şirket Yönetimi</span>
+                            </span>
+                            <i class="bi bi-chevron-right small text-secondary"></i>
+                        </a>
+                        <a href="#" class="btn btn-light border d-flex align-items-center justify-content-between p-3 rounded-4 transition-all">
+                            <span class="d-flex align-items-center">
+                                <i class="bi bi-file-earmark-bar-graph-fill text-info me-3 fs-5"></i>
+                                <span class="fw-semibold text-dark">Sistem Raporları</span>
+                            </span>
+                            <i class="bi bi-chevron-right small text-secondary"></i>
+                        </a>
+                         <a href="#" class="btn btn-light border d-flex align-items-center justify-content-between p-3 rounded-4 transition-all">
+                            <span class="d-flex align-items-center">
+                                <i class="bi bi-gear-fill text-secondary me-3 fs-5"></i>
+                                <span class="fw-semibold text-dark">Genel Ayarlar</span>
+                            </span>
+                            <i class="bi bi-chevron-right small text-secondary"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .transition-all { transition: all 0.2s ease-in-out; }
+    .transition-all:hover { transform: translateX(5px); border-color: var(--primary) !important; background: white !important; }
+</style>

@@ -1,0 +1,93 @@
+@{
+    ViewData["Title"] = "Geleceğin Teklif Toplama Platformu";
+}
+
+<div class="animate-fade-in">
+    <!-- Hero Section -->
+    <div class="hero-gradient mb-5 text-center text-lg-start">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <span class="badge bg-primary bg-opacity-10 text-primary mb-3 px-3 py-2">Versiyon 1.0 Yayında</span>
+                <h1 class="display-3 mb-4">Şeffaf, Hızlı ve <span class="text-primary">Güvenilir</span> İhale Süreçleri</h1>
+                <p class="lead mb-5 text-secondary">
+                    ETTS ile ihalelerinizi dijitalleştirin. Teklifleri toplama, değerlendirme ve sonuçlandırma süreçlerini tek bir platformdan yönetin.
+                </p>
+                <div class="d-flex flex-column flex-sm-row gap-3">
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg px-5 shadow">Şirketini Kaydet</a>
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-light btn-lg px-5 border">Sisteme Giriş</a>
+                    }
+                    else
+                    {
+                        <a asp-controller="OfferRequest" asp-action="Index" class="btn btn-primary btn-lg px-5 shadow">Aktif İhaleleri Gör</a>
+                         @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-dark btn-lg px-5">Admin Paneli</a>
+                        }
+                    }
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="position-relative">
+                    <div class="glass-card p-4 position-relative" style="z-index: 1;">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800" alt="Dashboard Preview" class="img-fluid rounded-4 shadow-sm">
+                    </div>
+                    <div class="bg-primary position-absolute rounded-circle" style="width: 100px; height: 100px; bottom: -20px; left: -20px; filter: blur(40px); opacity: 0.3;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features -->
+    <div class="row g-4 mb-5 pb-5">
+        <div class="col-md-4">
+            <div class="glass-card p-4 h-100">
+                <div class="bg-primary bg-opacity-10 text-primary rounded-3 d-flex align-items-center justify-content-center mb-4" style="width: 60px; height: 60px;">
+                    <i class="bi bi-shield-lock-fill fs-2"></i>
+                </div>
+                <h4>Uçtan Uca Güvenlik</h4>
+                <p class="text-secondary">Tüm verileriniz ve teklifleriniz en üst düzey güvenlik standartları ile korunur.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card p-4 h-100">
+                <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center mb-4" style="width: 60px; height: 60px;">
+                    <i class="bi bi-lightning-charge-fill fs-2"></i>
+                </div>
+                <h4>Hızlı Değerlendirme</h4>
+                <p class="text-secondary">Teklifleri saniyeler içinde karşılaştırın ve en uygun olanı seçin.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card p-4 h-100">
+                <div class="bg-info bg-opacity-10 text-info rounded-3 d-flex align-items-center justify-content-center mb-4" style="width: 60px; height: 60px;">
+                    <i class="bi bi-graph-up-arrow fs-2"></i>
+                </div>
+                <h4>Detaylı Analiz</h4>
+                <p class="text-secondary">Geçmiş ihalelerinizi ve şirket performanslarını detaylıca raporlayın.</p>
+            </div>
+        </div>
+    </div>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <!-- Quick Action Card for Logged In Users -->
+        <div class="glass-card p-5 text-center mt-5 mb-5 border-0" style="background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%);">
+            <h2 class="text-white mb-3">Tekrar Hoş Geldiniz, @User.Identity.Name!</h2>
+            <p class="text-white text-opacity-75 mb-4 lead">Kaldığınız yerden devam edebilir veya yeni ihaleleri inceleyebilirsiniz.</p>
+            <div class="d-flex justify-content-center gap-3">
+                 @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="OfferRequest" asp-action="Create" class="btn btn-light btn-lg px-4">Yeni Talep Oluştur</a>
+                    <a asp-controller="Admin" asp-action="Companies" class="btn btn-outline-light btn-lg px-4">Şirketleri Yönet</a>
+                }
+                else
+                {
+                    <a asp-controller="OfferRequest" asp-action="Index" class="btn btn-light btn-lg px-4">İhaleleri İncele</a>
+                    <a asp-controller="Offer" asp-action="MyOffers" class="btn btn-outline-light btn-lg px-4">Tekliflerim</a>
+                }
+            </div>
+        </div>
+    }
+</div>

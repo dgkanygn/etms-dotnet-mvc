@@ -1,0 +1,59 @@
+@model IEnumerable<ETTS.Models.Domain.Offer>
+
+@{
+    ViewData["Title"] = "Tekliflerim";
+}
+
+<div class="mb-4">
+    <h2>Gönderdiğim Teklifler</h2>
+</div>
+
+<div class="card shadow">
+    <div class="card-body">
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <p class="text-muted">Henüz bir teklif göndermemişsiniz.</p>
+                <a asp-controller="OfferRequest" asp-action="Index" class="btn btn-primary">Talepleri İncele</a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Talep Başlığı</th>
+                            <th>Fiyat</th>
+                            <th>Süre</th>
+                            <th>Durum</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var offer in Model)
+                        {
+                            <tr>
+                                <td>@offer.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                                <td>@offer.OfferRequest.Title</td>
+                                <td>@offer.Price.ToString("C2")</td>
+                                <td>@offer.DeliveryDays Gün</td>
+                                <td>
+                                    @{
+                                        var badgeClass = offer.Status == ETTS.Models.Domain.OfferStatus.Approved ? "bg-success" : 
+                                                        (offer.Status == ETTS.Models.Domain.OfferStatus.Rejected ? "bg-danger" : "bg-warning text-dark");
+                                    }
+                                    <span class="badge @badgeClass">@offer.Status</span>
+                                </td>
+                                <td>
+                                    <a asp-controller="OfferRequest" asp-action="Detail" asp-route-id="@offer.OfferRequestId" class="btn btn-sm btn-outline-primary">Talep Detayı</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

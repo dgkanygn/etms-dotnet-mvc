@@ -1,0 +1,178 @@
+@model ETTS.Models.Domain.OfferRequest
+
+@{
+    ViewData["Title"] = "Talep Detayı";
+}
+
+<div class="animate-fade-in">
+    <div class="mb-4">
+        <a asp-action="Index" class="btn btn-link text-decoration-none p-0 text-secondary mb-3">
+            <i class="bi bi-arrow-left me-1"></i> Listeye Dön
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Detail -->
+        <div class="col-lg-8">
+            <div class="glass-card p-4 p-md-5 border-0 shadow-sm mb-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start mb-4 gap-3">
+                    <div>
+                        <span class="badge bg-primary bg-opacity-10 text-primary mb-2">Talep Detayı</span>
+                        <h2 class="fw-bold mb-1">@Model.Title</h2>
+                        <div class="d-flex align-items-center text-secondary small">
+                            <i class="bi bi-person-circle me-2"></i> @Model.CreatedByUser.Username | 
+                            <i class="bi bi-clock ms-2 me-2"></i> @Model.CreatedAt.ToString("dd.MM.yyyy")
+                        </div>
+                    </div>
+                    <div>
+                        @{
+                            var timeLeft = Model.Deadline - DateTime.UtcNow;
+                            var sClass = timeLeft.TotalDays > 0 ? "bg-success" : "bg-danger";
+                        }
+                        <div class="bg-light rounded-4 p-3 text-center border">
+                            <div class="small text-secondary mb-1">Kalan Süre</div>
+                            <h4 class="mb-0 @(timeLeft.TotalDays <= 3 && timeLeft.TotalDays > 0 ? "text-warning" : "text-dark")">
+                                @(timeLeft.TotalDays > 0 ? $"{(int)timeLeft.TotalDays} Gün" : "Süre Doldu")
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2 text-dark">Açıklama</h5>
+                    <p class="lead text-secondary" style="white-space: pre-line;">@Model.Description</p>
+                </div>
+
+                @if (User.IsInRole("Company") && Model.Deadline > DateTime.UtcNow)
+                {
+                    <div class="bg-primary bg-opacity-5 rounded-4 p-4 border border-primary border-opacity-10">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h5 class="mb-1 fw-bold">Hala Teklif Verilebilir!</h5>
+                                <p class="mb-0 text-secondary small">Şirketiniz adına en uygun teklifi hemen hazırlayıp gönderin.</p>
+                            </div>
+                            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                <a asp-controller="Offer" asp-action="Create" asp-route-requestId="@Model.Id" class="btn btn-primary btn-lg px-4 shadow-sm">
+                                    Teklif Ver
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white border-0 py-4 px-4">
+                        <h5 class="mb-0 fw-bold d-flex align-items-center">
+                            <i class="bi bi-journal-text me-2 text-primary"></i>
+                            Gelen Teklifler <span class="badge bg-light text-dark ms-2 fw-normal">@Model.Offers.Count</span>
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        @if (!Model.Offers.Any())
+                        {
+                            <div class="text-center py-5">
+                                <i class="bi bi-inbox text-light display-1 mb-3"></i>
+                                <p class="text-secondary mb-0">Henüz teklif gelmemiş.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="bg-light bg-opacity-50">
+                                        <tr>
+                                            <th class="ps-4 border-0 small text-secondary">ŞİRKET</th>
+                                            <th class="border-0 small text-secondary">FİYAT</th>
+                                            <th class="border-0 small text-secondary">TESLİM</th>
+                                            <th class="border-0 small text-secondary">DURUM</th>
+                                            <th class="border-0 pe-4"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var offer in Model.Offers)
+                                        {
+                                            <tr>
+                                                <td class="ps-4">
+                                                    <div class="fw-semibold">@offer.CompanyUser.Username</div>
+                                                    <div class="text-secondary" style="font-size: 0.7rem;">@offer.CreatedAt.ToString("dd.MM.yyyy")</div>
+                                                </td>
+                                                <td class="fw-bold text-dark">@offer.Price.ToString("C2")</td>
+                                                <td>@offer.DeliveryDays Gün</td>
+                                                <td>
+                                                    @{
+                                                        var badgeClass = offer.Status == ETTS.Models.Domain.OfferStatus.Approved ? "bg-success" : (offer.Status == ETTS.Models.Domain.OfferStatus.Rejected ? "bg-danger" : "bg-warning text-dark");
+                                                    }
+                                                    <span class="badge @badgeClass" style="font-size: 0.75rem;">@offer.Status</span>
+                                                </td>
+                                                <td class="pe-4 text-end">
+                                                    @if (offer.Status == ETTS.Models.Domain.OfferStatus.Pending)
+                                                    {
+                                                        <div class="btn-group shadow-sm">
+                                                            <form asp-controller="Offer" asp-action="Evaluate" method="post" class="d-inline">
+                                                                <input type="hidden" name="OfferId" value="@offer.Id" />
+                                                                <input type="hidden" name="NewStatus" value="Approved" />
+                                                                <button type="submit" class="btn btn-sm btn-success px-3">Onayla</button>
+                                                            </form>
+                                                            <form asp-controller="Offer" asp-action="Evaluate" method="post" class="d-inline">
+                                                                <input type="hidden" name="OfferId" value="@offer.Id" />
+                                                                <input type="hidden" name="NewStatus" value="Rejected" />
+                                                                <button type="submit" class="btn btn-sm btn-danger px-3">Reddet</button>
+                                                            </form>
+                                                        </div>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(offer.DocumentPath))
+                                                    {
+                                                        <a href="@offer.DocumentPath" class="btn btn-sm btn-light ms-2 border" target="_blank" title="Dokümanı İndir">
+                                                            <i class="bi bi-file-earmark-pdf"></i>
+                                                        </a>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Sidebar Info -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 mb-4 sticky-top" style="top: 100px;">
+                <div class="card-header bg-white border-0 py-4 px-4">
+                    <h5 class="mb-0 fw-bold">Özet Bilgiler</h5>
+                </div>
+                <div class="card-body px-4 pt-0">
+                    <ul class="list-group list-group-flush small">
+                        <li class="list-group-item d-flex justify-content-between px-0 py-3">
+                            <span class="text-secondary">Yayın Tarihi</span>
+                            <span class="fw-semibold">@Model.CreatedAt.ToString("dd.MM.yyyy")</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0 py-3">
+                            <span class="text-secondary">Son Başvuru</span>
+                            <span class="fw-semibold">@Model.Deadline.ToString("dd.MM.yyyy")</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0 py-3">
+                            <span class="text-secondary">Toplam Teklif</span>
+                            <span class="fw-semibold">@Model.Offers.Count</span>
+                        </li>
+                    </ul>
+                    
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="d-grid gap-2 mt-4 pb-3">
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
+                                <i class="bi bi-pencil me-2"></i> Talebi Düzenle
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+## --- Visual Studio & .NET ---
+# Derleme çıktıları (Binary ve Geçici Dosyalar)
+[Bb]in/
+[Oo]bj/
+
+# Kullanıcıya özel ayarlar (Görseldeki .csproj.user dosyası dahil)
+*.user
+*.userosscache
+*.sln.docuser
+
+# Visual Studio Cache ve Geçici Klasörler
+.vs/
+.agent/
+Generated Files/
+
+# NuGet Paketleri
+*.nupkg
+packages/
+
+## --- OS & IDE ---
+# macOS özel dosyaları
+.DS_Store
+
+# JetBrains (Rider) ayarları
+.idea/
+
+## --- Uygulama Ayarları (ÖNEMLİ) ---
+# Eğer içinde şifre/bağlantı metni varsa alttakilerin başındaki # kaldır:
+# appsettings.json
+# appsettings.Development.json
+
+# Local sırlar (Secret Manager)
+secrets.json

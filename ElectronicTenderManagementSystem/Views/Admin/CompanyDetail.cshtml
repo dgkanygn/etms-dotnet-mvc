@@ -1,0 +1,65 @@
+@model ETTS.Models.Domain.CompanyProfile
+
+@{
+    ViewData["Title"] = "Şirket Detayı";
+}
+
+<div class="mb-4">
+    <a asp-action="Companies" class="btn btn-outline-secondary">Listeye Dön</a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">@Model.CompanyName</h4>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Kullanıcı Adı</dt>
+                    <dd class="col-sm-9">@Model.User.Username</dd>
+
+                    <dt class="col-sm-3">E-posta</dt>
+                    <dd class="col-sm-9">@Model.User.Email</dd>
+
+                    <dt class="col-sm-3">Telefon</dt>
+                    <dd class="col-sm-9">@Model.Phone</dd>
+
+                    <dt class="col-sm-3">Durum</dt>
+                    <dd class="col-sm-9">
+                        @if (Model.IsActive)
+                        {
+                            <span class="badge bg-success">Aktif</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Pasif</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-3">Kayıt Tarihi</dt>
+                    <dd class="col-sm-9">@Model.User.CreatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
+
+                    <dt class="col-sm-3">Açıklama</dt>
+                    <dd class="col-sm-9">@(Model.Description ?? "Belirtilmemiş")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Hızlı İşlemler</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="ToggleCompany" asp-route-id="@Model.Id" method="post" class="d-grid gap-2">
+                    <button type="submit" class="btn @(Model.IsActive ? "btn-danger" : "btn-success")">
+                        @(Model.IsActive ? "Hesabı Dondur" : "Hesabı Aktifleştir")
+                    </button>
+                    <a href="mailto:@Model.User.Email" class="btn btn-outline-primary">E-posta Gönder</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

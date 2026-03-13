@@ -1,0 +1,58 @@
+@model ETTS.Models.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Giriş Yap";
+}
+
+<div class="row justify-content-center align-items-center min-vh-75 animate-fade-in">
+    <div class="col-md-5">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold text-primary">Tekrar Hoş Geldiniz</h2>
+            <p class="text-secondary">Hesabınıza giriş yaparak ihaleleri takip etmeye devam edin.</p>
+        </div>
+        
+        <div class="card shadow-lg p-4 p-md-5">
+            <form asp-action="Login" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+                
+                <div class="mb-4">
+                    <label asp-for="Email" class="form-label fw-semibold">E-posta Adresi</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-secondary"></i></span>
+                        <input asp-for="Email" class="form-control border-start-0 ps-0" placeholder="ornek@sirket.com" />
+                    </div>
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+                
+                <div class="mb-4">
+                    <label asp-for="Password" class="form-label fw-semibold">Şifre</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-secondary"></i></span>
+                        <input asp-for="Password" type="password" class="form-control border-start-0 ps-0" placeholder="••••••••" />
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        <input asp-for="RememberMe" class="form-check-input" />
+                        <label asp-for="RememberMe" class="form-check-label small">Beni Hatırla</label>
+                    </div>
+                    <a href="#" class="small text-decoration-none">Şifremi Unuttum</a>
+                </div>
+                
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg shadow-sm">Giriş Yap</button>
+                </div>
+            </form>
+            
+            <div class="mt-4 text-center">
+                <p class="text-secondary small">Hesabınız yok mu? <a asp-action="Register" class="fw-bold text-decoration-none text-primary">Hemen Kaydolun</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
